@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Flexbox Container */
+  .container {
+    display: flex;
+    flex-direction: row; /* Aligns children (sidebar and content) horizontally */
+    gap: 2px; /* Adds space between sidebar and content */
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    flex-basis: 250px; /* Adjust the width of the sidebar */
+    flex-shrink: 0; /* Prevents the sidebar from shrinking */
+    /* Your existing sidebar styles */
+  }
+
+  /* Content Area Styles - Adjustments for card-body alignment */
+  .content-area {
+    flex-grow: 1; /* Allows content area to take the remaining space */
+    /* Additional styles as needed */
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    box-shadow: 0 0px 10px rgba(238, 33, 105, 0.752);
+    font-family: poppins;
+    border-radius: 5px;
+    /* Your existing card-body styles */
+  }
+
+  .list-group-item {
+    position: relative;
+    display: block;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, .125);
+    box-shadow: 0 1px 4px darkgrey;
+    /* Your existing list-group-item styles */
+  }
+
+  .list-group-item:hover {
+    background-color: #ededed;
+    border: 1px solid rgba(255, 255, 255, 0.811);
+    box-shadow: 0 1px 4px rgba(178, 178, 178, 0.947);
+    /* Your existing hover styles */
+  }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="sidebar">
+  {% include 'sidebar.html' %}
+</div>
+<div class="container">
+  
+  
+  <hr>
+  <form method="post" id="assessmentForm">
+    {% csrf_token %}
+    {% for question in assessment_questions %}
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Question:</h5>
+        <p class="card-text">{{ question.question }}</p>
+        <h5 class="card-title">Options:</h5>
+        <ul class="list-group">
+          {% for option in question.options %}
+          <li class="list-group-item">
+            <input type="radio" name="selected_options_{{ question.id }}" value="{{ option }}" id="option_{{ question.id }}_{{ forloop.counter }}">
+            <label for="option_{{ question.id }}_{{ forloop.counter }}">{{ option }}</label>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block styles %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .assessment-popup {
+    /* Or absolute, depending on your needs */
+    top: 50%;
+    left: 50%;
+    width: 80%; /* Adjust based on preference */
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it's above other content */
+    display: none; /* Hidden by default */
+}
+  /* Content Area Styles - Adjustments for card-body alignment */
+  .content-area {
+    flex-grow: 1; /* Allows content area to take the remaining space */
+    /* Additional styles as needed */
+  }
+
+
+  .sidebar {
+    flex: 1; /* Adjust as necessary */
+    max-width: 250px; /* Maximum width of the sidebar */
+    min-height: 100%; /* Full height */
+    /* Additional styling for your sidebar */
+    flex-basis: 250px; /* Adjust the width of the sidebar */
+    flex-shrink: 0; 
+    z-index: 500; /* Lower than the popup to keep the popup on top */
+    position: relative;
+  }
+
+  .container {
+    flex: 3; /* Takes the remaining space */
+    padding: 20px; /* Spacing around the content */
+    overflow: auto; /* Adds scroll to the container if the content overflows */
+    /* Additional styling for your container */
+    display: flex;
+    flex-direction: row; /* Aligns children (sidebar and content) horizontally */
+    gap: 2px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="sidebar">
+  {% include 'sidebar.html' %}
+</div>
+<div class="container">
+  
+  <hr>
+  {% if assessment_history %}
+  <button id="viewHistoryButton" onclick="showAssessmentHistory()">View Assessment History</button>
+    <div id="assessmentHistoryPopup" class="assessment-popup">
+      <span class="close" onclick="closeAssessmentHistoryPopup()">&times;</span>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Assessment ID</th>
+            <th>Score</th>
+            <th>Result Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for history in assessment_history %}
+          <tr>
+            <td>{{ history.assessment_id }}</td>
+            <td>{{ history.score }}</td>
+            <td>{{ history.result_details }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No assessment history found.</p>
+  {% endif %}
+</div>
+
+<script>
+  function showAssessmentHistory() {
+    var popup = document.getElementById("assessmentHistoryPopup");
+    var viewButton = document.getElementById("viewHistoryButton");
+    popup.style.display = "block";
+    viewButton.style.display = "none";
+  }
+
+  function closeAssessmentHistoryPopup() {
+    var popup = document.getElementById("assessmentHistoryPopup");
+    var viewButton = document.getElementById("viewHistoryButton");
+    popup.style.display = "none";
+    viewButton.style.display = "block"; // Optionally show it again when the popup is closed
+  }
+</script>
+{% endblock %}

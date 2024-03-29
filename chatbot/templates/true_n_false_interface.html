@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Flexbox Container */
+  .container {
+    display: flex;
+    flex-direction: row; /* Aligns children (sidebar and content) horizontally */
+    gap: 2px; /* Adds space between sidebar and content */
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    flex-basis: 250px; /* Adjust the width of the sidebar */
+    flex-shrink: 0; /* Prevents the sidebar from shrinking */
+    /* Your existing sidebar styles */
+  }
+
+  /* Content Area Styles - Adjustments for card-body alignment */
+  .content-area {
+    flex-grow: 1; /* Allows content area to take the remaining space */
+    display: flex; /* Enables flexbox properties within the content area */
+    flex-direction: column; /* Stacks .card-body elements vertically */
+    align-items: center; /* Centers .card-body elements horizontally */
+    justify-content: center; /* Centers .card-body elements vertically if you want */
+    padding: 20px; /* Provides padding around the content area */
+    overflow: auto; /* Allows scrolling if the content exceeds the viewport height */
+  }
+
+  .card-body {
+    
+    flex: 1 1 auto;
+    padding: 1.25rem;
+    box-shadow: 0 0px 10px rgba(238, 33, 105, 0.752);
+    font-family: poppins;
+    border-radius: 5px;
+    margin: 30px 0;
+    /* Your existing card-body styles */
+  }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="sidebar">
+  {% include 'sidebar.html' %}
+</div>
+<div class="container">
+  
+  
+  <hr>
+  <form method="post" id="trueFalseForm">
+    {% csrf_token %}
+    {% for question in true_false_questions %}
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Question:</h5>
+        <p class="card-text">{{ question.question }}</p>
+        <div class="form-group">
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="answer_true_{{ question.id }}" name="answer_{{ question.id }}" value="true">
+            <label class="form-check-label" for="answer_true_{{ question.id }}">True</label>
+          </div>
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="answer_false_{{ question.id }}" name="answer_{{ question.id }}" value="false">
+            <label class="form-check-label" for="answer_false_{{ question.id }}">False</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+{% endblock %}

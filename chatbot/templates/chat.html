@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+    body, html {
+      height: 100%;
+    }
+
+    .messages-box {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .messages-list {
+      padding-left: 0;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      list-style: none;
+    }
+
+    .message-text {
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .sent {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+    }
+
+    .received {
+      background-color: #f1f0f0;
+      align-self: flex-start;
+    }
+
+    .message-form {
+      /*display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: #f8f9fa;*/
+      width: 100%;
+      padding: 9px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      border-color: #ffffff;
+      font-family: poppins;
+
+    }
+
+    .message-input {
+      flex: 1;
+      border-radius: 0;
+      border-right: none;
+    }
+
+    .btn-send {
+      border-radius: 4px;
+      background-color: #dc3265;
+      color: #ffffff;
+      cursor: pointer;
+      border-color: #dc3265;
+      box-shadow: 0 1px 10px rgba(202, 20, 87, 0.759);
+    }
+    .btn-send:hover {
+    background-color: #c9c9c9;
+    color: #dc3265;
+    border-color: #dc3265;
+  }
+
+    .chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center; /* Center content horizontally */
+      /*padding-top: 55px;*/
+      padding-left: 250px;
+     /* padding-bottom: 10px;*/
+     
+    }
+    .main-container {
+    display: flex;
+    height: 100%;
+    }
+
+    .card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid transparent rgb(255, 255, 255);
+    width: 100%;}
+
+    .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    box-shadow: 0px 1px 10px #dc3265;
+    /*transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;*/
+}
+
+.navbar {
+  display: flex;
+  background-color: #efefef; /* Background color */
+  width:100%;
+  box-shadow:  0px 0px 10px #f44067;
+}
+
+.navbar-nav {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.nav-item {
+  margin-right: 10px; /* Adjust the spacing between nav items */
+}
+
+.nav-link {
+  color: #f44067; /* Text color */
+  text-decoration: none;
+  padding: 10px;
+  font-weight: bold;
+  margin-right: 5px; /* Adjust as needed */
+  padding-left: 10; /* Removes padding on the left */
+  padding-right: 0;
+}
+
+.nav-link:hover {
+  background-color: #cccccc; /* Hover background color */
+  color:#dc3265
+}
+
+
+
+    /*container for sidebar*/
+  </style>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-container">
+  {% include 'sidebar.html' %}
+
+<div class="chat-container">
+  <div class="card flex-grow-1 ">
+    <nav class="navbar">
+      {% if user.is_authenticated %}
+      <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="img.jpg" alt="SchoolGPT"></a>
+      <a class="nav-link" style="margin-left: auto;" href="logout">Logout</a>
+      {% else %}
+      <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="img.jpg" alt="SchoolGPT"></a>
+      <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
+      <a class="nav-link"  style="margin-left: auto;" href="register">Register</a>
+      {% endif %}
+  </nav>
+    
+    <div class="card-body messages-box">
+      
+      <ul class="list-unstyled messages-list">
+        
+         <li class="message received">
+          <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+              Hi {{user.username}}, I am your AI Chatbot, you can ask me anything.
+            </div>
+          </div>
+        </li>
+
+        {% for chat in chats %}
+          {% if chat.user == request.user %}
+
+            <li class="message sent">
+          <div class="message-text">
+            <div class="message-sender">
+              <b>You</b>
+            </div>
+            <div class="message-content">
+              {{chat.message}}
+            </div>
+          </div>
+        </li>
+
+        <li class="message received">
+          <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+              {{chat.response}}
+            </div>
+          </div>
+        </li>
+
+          {% endif %}
+        {% endfor %}
+        
+      </ul>
+      
+    </div>
+    <br><br>
+    <br><br>
+    <br><br>
+  </div>
+  <form class="message-form">
+    {%csrf_token%}
+    <div class="input-group">
+      <input type="text" class="form-control message-input" placeholder="Type your message...">
+      <div class="input-group-append">
+        <button type="submit" class="btn btn-primary btn-send">Send</button>
+      </div>
+    </div>
+  </form>
+</div>
+</div>
+
+<script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+  const messageInput = document.querySelector('.message-input');
+
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+  
+    if (message.length === 0) {
+      return;
+    }
+
+    const messageItem = document.createElement('li');
+    messageItem.classList.add('message', 'sent');
+    messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+                <b>You</b>
+            </div>
+            <div class="message-content">
+                ${message}
+            </div>
+        </div>`;
+    messagesList.appendChild(messageItem);
+
+    messageInput.value = '';
+
+    fetch('', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+                ${response}
+            </div>
+        </div>
+          `;
+        messagesList.appendChild(messageItem);
+      });
+  });
+
+</script>
+{% endblock %}

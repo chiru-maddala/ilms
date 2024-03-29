@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+  /* Existing styles */
+
+.main-container {
+  display: flex;
+}
+
+.chat-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  /*padding-top: 55px;*/
+  padding-left: 250px;
+  padding-bottom: 55px;
+}
+.card{
+  flex-grow:1;
+}
+  .vertical-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .message-form {
+    width: 300%;
+    max-width: 700px; /* Adjust as needed */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(202, 20, 87, 0.759);
+    font-family: poppins;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+  }
+
+  .btn-send {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #dc3265;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(202, 20, 87, 0.759);
+  }
+
+  .btn-send:hover {
+    background-color: #c9c9c9;
+    color: #dc3265;
+  }
+
+
+  .navbar {
+  display: flex;
+  background-color: #efefef; /* Background color */
+  width:100%;
+  box-shadow:  0px 0px 10px #f44067;
+}
+
+.navbar-nav {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.nav-item {
+  margin-right: 10px; /* Adjust the spacing between nav items */
+}
+
+.nav-link {
+  color: #f44067; /* Text color */
+  text-decoration: none;
+  padding: 10px;
+  font-weight: bold;
+  margin-right: 5px; /* Adjust as needed */
+  padding-left: 10; /* Removes padding on the left */
+  padding-right: 0;
+}
+
+.nav-link:hover {
+  background-color: #cccccc; /* Hover background color */
+  color:#dc3265
+}
+
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="main-container">
+  {% include 'sidebar.html' %}
+
+<div class="chat-container">
+ <!-- <div class="card">
+    <div class="card-header bg-primary text-white">Chat</div>
+    {% if user.is_authenticated %}
+    <div class="card-header bg-primary text-white">
+      <b>Welcome, {{ user.username }}</b> <a style="color: #ffffff;" href="logout"> Logout</a>
+    </div>
+    {% else %}
+    <div class="card-header bg-primary text-white">
+      <a style="color: #ffffff;" href="login">Login</a>
+      <a style="color: #ffffff;" href="register"> Register</a>
+    </div>
+  
+    {% endif %}-->
+
+    <nav class="navbar">
+        {% if user.is_authenticated %}
+        <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="img.jpg" alt="SchoolGPT"></a>
+        <a class="nav-link" style="margin-left: auto;" href="logout">Logout</a>
+        {% else %}
+        <a class="nav-link" style="margin-right:auto ;" href="{% url 'chatbot' %}"><img src="img.jpg" alt="SchoolGPT"></a>
+        <a class="nav-link" style="margin-left: auto;" href="signin">Login</a>
+        <a class="nav-link"  style="margin-left: auto;" href="register">Register</a>
+        {% endif %}
+    </nav>
+  
+    <div class="card-body messages-box">
+
+      <ul class="list-unstyled messages-list">
+        <!-- Messages List -->
+      </ul>
+
+      <div class="vertical-center">
+        <form class="message-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="subjects">Select Subjects:</label>
+            <select class="form-control" name="subjects" multiple required>
+              <option value="">-- Select Subjects --</option>
+              <option value="english">English</option>
+              <option value="science">Science</option>
+              <option value="hindi">Hindi</option>
+              <option value="maths">Maths</option>
+              <option value="evs">EVS</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="topics">Choose Topics:</label>
+            <select class="form-control" name="topics" multiple required>
+              <option value="">-- Select Topics --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="assessment_type">Assessment Type:</label>
+            <select class="form-control" name="assessment_type" required>
+              <option value="">-- Select Type --</option>
+              <option value="Multiple Choice Questions">Multiple Choice Questions</option>
+              <option value="True and False">True and false</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="num_questions">Enter Number of Questions:</label>
+            <input type="number" class="form-control" name="num_questions" min="1" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-send">Send</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!--</div>-->
+
+<script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+  const messageInput = document.querySelector('[name="subjects"]'); // Corrected selector
+  const topicsSelect = document.querySelector('[name="topics"]'); // Corrected selector
+  const assessmentTypeSelect = document.querySelector('[name="assessment_type"]'); // Corrected selector
+  const numQuestionsInput = document.querySelector('[name="num_questions"]'); // Corrected selector
+
+// Rest of your JavaScript code...
+
+
+  //i am adding the topic selector thing so delete it if any errors
+  // Define topic data (assuming a simple structure for this example)
+  const subjectTopics = {
+      "english": ["Sentence Equivalence","Text Completion","Reading Comprehension","Nouns","Pro Nouns","Verbs","Tenses","Adjectives","Adverbs","Logical Reading Comprehension"],
+      "science": ["Human Body", "Fluid Dynamics", "Newtonion Mechanics", "Thermodynaics", "Organic Chemistry", "Periodic Table"],
+      "hindi": ["Chapter 1: रखा की रस्सी", "Chapter 2: फसलें का त्योहार", "Chapter 3: खिलौनेवाला", "Chapter 4: नन्हा फनकार", "Chapter 5: जहाँ चाह वहाँ राह", "Chapter 6: चिटठी का सफर", "Chapter 7: डाकिए की कहानी ,कंवरसिंह की जुबानी", "Chapter 8: वे दिन भी क्या दिन थे","Chapter 9: एक माँ की बेबसी","Chapter 10 एक दिन की बादशाहत","Chapter 11: चावल की रोटियां", "Chapter 12: गुरु और चेला", "Chapter 13: स्वामी की दादी", "Chapter 14: बाघ आया उस रात", "Chapter 15: बिशन की दिलेरी",  "Chapter 16: पानी रे पानी", "Chapter 17: छोटी-सी हमारी नदी", "Chapter 18:चुनौती हिमालय की"],
+      "evs": ["Chapter 1: Super Senses", "Chapter 2: A Snake Charmer Story", "Chapter 3: From tasting to digesting", "Chapter 4: Mangoes Round the Year", "Chapter 5: Seeds and Seeds", "Chapter 6: Every Drop Counts", "Chapter 7: Experiments with Water", "Chapter 8: A Treat for Mosquitoes", "Chapter 9: Up You Go!", "Chapter 10: Walls Tell Stories", "Chapter 11: Sunita in Space", "Chapter 12: What if it Finishes?", "Chapter 13: A Shelter so High!", "Chapter 14: When the Earth Shook!", "Chapter 15: Blow Hot, Blow Cold", "Chapter 16: Who will do this Work?", 
+      "Chapter 17: Across the Wall", "Chapter 18: No Place for Us?", "Chapter 19: A Seed tells a Farmers Story", "Chapter 20: Whose Forests?", "Chapter 21: Like Father, Like Daughter", "Chapter 22: On the Move Again"],
+      "maths":  ["Calculus","Statistics","Trigonometry","Algebra","Rate Time Work","Permutations and Combinations","Probability","Geometry"]
+    };
+  
+    // Function to update topics based on selected subject(s)
+    function updateTopics() {
+      const selectedSubjects = [...messageInput.selectedOptions]
+        .map(option => option.value);
+  
+      topicsSelect.innerHTML = ''; // Clear previous options
+  
+      selectedSubjects.forEach(subject => {
+        if (subjectTopics.hasOwnProperty(subject)) {
+          subjectTopics[subject].forEach(topic => {
+            const option = document.createElement('option');
+            option.value = topic;
+            option.text = topic;
+            topicsSelect.appendChild(option);
+          });
+        } else {
+          // Handle case where a subject has no associated topics
+          const option = document.createElement('option');
+          option.value = "";
+          option.text = "No topics available for this subject";
+          option.disabled = true;
+          topicsSelect.appendChild(option);
+        }
+      });
+
+
+
+
+
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value
+    const topics=topicsSelect.value
+    const assess_type=assessmentTypeSelect.value
+    const num_ques=numQuestionsInput.value
+     
+    //this is for specifing the url for the assessment type
+    let assessmentUrl = '';
+
+    if (assess_type === 'Multiple Choice Questions') {
+        assessmentUrl = '/interface'; // URL for MCQ interface
+    } else if (assess_type === 'True and False') {
+        assessmentUrl = '/true_n_false_interface'; //  URL for true/false questions interface
+    }
+
+    const combinedMessage = `Generate ${num_ques} ${assess_type} questions for ${topics} for the subject ${message} class 5th cbse ncert`;
+//changes made here if you want to return to orignal msg just remove the combined message const and change the ${combined}
+    const messageItem = document.createElement('li');
+    messageItem.classList.add('message', 'sent');
+    messageItem.innerHTML = `
+        <!--<div class="message-text">
+            <div class="message-sender">
+                <b>You</b>
+            </div>
+            <div class="message-content">
+                ${combinedMessage}
+            </div>
+        </div>-->`;
+    messagesList.appendChild(messageItem);
+
+    messageInput.value = '';
+
+    fetch('', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': combinedMessage
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        // Redirect to all the interfaces with assessment data
+        //window.location.href = `/interface?assessment_data=${encodeURIComponent(response)}`;
+        window.location.href = assessmentUrl + '?assessment_data=' + encodeURIComponent(response);
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <!--<div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+                ${response}
+            </div>
+        </div>-->
+          `;
+        messagesList.appendChild(messageItem);
+      });
+  });}
+
+  // Update topics on subject change
+  messageInput.addEventListener('change', updateTopics);
+  
+  // Enable/disable topics select based on subjects
+  messageInput.addEventListener('change', () => {
+    topicsSelect.disabled = messageInput.value === '';
+  });
+
+  // You can optionally handle initial topic selection based on a default subject
+  if (messageInput.querySelector('option:selected').value) {
+    updateTopics();
+  }
+
+</script>
+
+{% endblock %}
