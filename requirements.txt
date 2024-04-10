@@ -21,4 +21,3 @@ typing_extensions==4.10.0
 six
 djongo
 pytz
-pymongo==3.7.2
