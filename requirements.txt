@@ -19,5 +19,4 @@ sqlparse
 tqdm==4.66.2
 typing_extensions==4.10.0
 six
-djongo
-pytz
+mysqlclient
