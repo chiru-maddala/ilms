@@ -75,6 +75,8 @@ WSGI_APPLICATION = 'django_chatbot.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# MYSQL is working!
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
