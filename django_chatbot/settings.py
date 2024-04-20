@@ -73,6 +73,7 @@ WSGI_APPLICATION = 'django_chatbot.wsgi.application'
 
 
 # Database
+# Testing Branching
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # MYSQL is working!
